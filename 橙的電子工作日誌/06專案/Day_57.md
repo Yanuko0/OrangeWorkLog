@@ -30,3 +30,5 @@ console.log(str.substring(0, 20));
 console.log(str.substring(100, 0)); 
 --> 
 <!-- 0,5則會提取 0~4個字  會跟5,0提取0~4的字一樣 -->
+
+<!-- 學習sass scss -->
