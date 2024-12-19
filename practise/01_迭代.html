@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <script>
+    // for迴圈
+    function forLoop(n) {
+      let res = 0;
+      for (let i = 1; i <= n; i++) {
+        res = res + i;
+        console.log(`第${i}次,res為${res}`);
+      }
+      return res;
+    }
+    // console.log("這邊是結果",forLoop(10))
+
+    /* while迴圈*/
+    function whileLoop(n) {
+      let res = 0;
+      let i = 1;
+      while (i <= n) {
+        console.log(`第${i}次,res是${res}`);
+        res += i;
+        i++;
+        // console.log(`跑完i是${i},res是${res}`)
+      }
+      return res;
+    }
+    // console.log("這邊是結果",whileLoop(5))
+
+    /* while 迴圈(兩次更新)*/
+    function whileLoopII(n) {
+      let res = 0;
+      let i = 1;
+      while (i <= n) {
+        console.log(`第${i}次,res為${res}`);
+        res = res + i;
+        i++;
+        i = i * 2;
+        console.log(`計算完後i為${i},res為${res}`);
+      }
+      return res;
+    }
+    // console.log("這邊是結果", whileLoopII(10))
+
+    /* 巢狀迴圈*/
+    function nestedForLoop(n) {
+      let res = "";
+      for (let i = 1; i <= n; i++) {
+        console.log(`這時的i是${i}`);
+        for (let j = 1; j <= n; j++) {
+          console.log(`這時的j是${j}`);
+          res = res + `(${i}, ${j}), `;
+          console.log(`這時的res是${res}`);
+        }
+      }
+      return res;
+    }
+    // console.log("這邊是結果", nestedForLoop(3))
+
+    function recur(n) {
+      //終止條件
+      if (n === 1) return 1;
+      //遞: 遞迴呼叫
+      const res = recur(n - 1);
+      console.log(`這時的res:${res}`);
+      //迴: 返回結果
+      return n + res;
+    }
+    // // 4 + recur(3) = 4 + 3 + recur(2) = 4 + 3 + 2 +recur(1) = 4 + 3 + 2 + 1 =10
+
+    // console.log('結果是',recur(4))
+
+    /*尾遞迴*/
+    function tailRecur(n, res) {
+      //終止條件
+      if (n === 0) return res;
+      console.log(`這時的n是${n},res是${res}`);
+      //尾遞迴呼叫
+      return tailRecur(n - 1, res + n);
+    }
+    // console.log('結果是', tailRecur(4, 8))
+    // tailRecur(4,8) = tailRecur(3,12) = tailRecur(2,15) =tailRecur(1,17) = 18
+
+    /*遞迴樹*/
+    // 給定一個費波那契數列 0, 1, 1, 2, 3, 5, 8, 13,..,求該數列的第 n 個數字。
+    // f(n) = f(n - 1) + f(n - 2)
+    function fib(n) {
+      //終止條件 f(1) = 0, f(2) = 1
+      if (n === 1 || n === 2) return n - 1;
+      //遞迴呼叫 f(n) = f(n-1) + f(n-2)
+      const res = fib(n - 1) + fib(n - 2);
+
+      console.log(`res是${res}`);
+
+      //返回結果
+      return res;
+    }
+    // console.log(fib(8))
+
+    //fib(3) = fib(2) + fib(1) = 1 + 0 = 1
+
+    //fib(4) = fib(3) + fib(2) = fib(2) + fib(1) + fib(2)
+    //       = 2(fib(2)) + fib(1) = 2*1 + 1*0 = 2
+
+    //fib(5) = fib(4) + fib(3) = fib(3) + fib(2) + fib(3) =
+    //         2(fib(3)) + fib(2) =  2(fib(2)+fib(1)) + fib(2) =
+    //         3*fib(2) + 2*fib(1) = 3
+    //fib(6) = fib(5) + fib(4) = fib(4) + fib(3) + fib(4) =
+    //         2(fib(4)) + fib(3) = 2(fib(3) + fib(2)) +fib(3) =
+    //         3(fib(3)) + 2(fib(2)) = 3(fib(2) + fib(1)) + 2(fib(2))
+    //         5(fib(2))+ 3(fib(1)) = 5
+    //fib(7) = fib(6) + fib(5) = fib(5) + fib(4) + fib(5) =
+    //         2(fib(5)) + fib(4) = 2(fib(4)+fib(3)) + fib(4)=
+    //         3(fib(4)) + 2fib(3) = 3(fib(3) + fib(2)) + 2fib(3) =
+    //         5(fib(3)) + 3fib(2) = 5(fib(2) + fib(1)) + 3(fib(2)) =
+    //         8(fib(2)) + 5fib(1) = 8
+    //fib(8) = 13
+
+    /*使用迭代模擬遞迴*/
+    function forLoopRecur(n) {
+      const stack = [];
+      let res = 0;
+      //遞:遞迴呼叫
+      for (let i = n; i > 0; i--) {
+        //透過"入堆疊操作"模擬"遞"
+        stack.push(i);
+        console.log("stack是", stack);
+      }
+      console.log(`stack:${stack},res:${res}`);
+      //迴:返回結果
+      while (stack.length) {
+        //透過"出堆疊操作"模擬"迴"
+        res += stack.pop();
+        console.log("res是", res);
+      }
+      console.log(`stack:${stack},res:${res}`);
+      return res;
+    }
+
+    // console.log(forLoopRecur(3))
+    // forLoopRecur(3) :
+    // stack[3,2,1]
+    // stack.length 是 3 , res = 0 + 1
+    // stack[3,2]
+    // stack.length 是 2 , res = 1 + 2
+    // stack[3]
+    // stack.length 是 1 , res = 3 + 3
+  </script>
+</html>
