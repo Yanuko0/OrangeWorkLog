@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <body></body>
+  <script>
+    /*Easy*/
+
+    /*手寫clamp*/
+    function clamp(val, min, max) {
+      return Math.min(Math.max(val, min), max);
+    }
+    //Math.max(val,min)返回val跟min中較大的值,保證val不小於min
+    //Math.min(res,max)返回res跟max中較小的值,保證最後的值不大於max
+
+    // console.log(clamp(10, 5, 15));  // 输出 10 (在范围内)
+    // console.log(clamp(3, 5, 15));   // 输出 5  (小于 min，返回 min)
+    // console.log(clamp(20, 5, 15));  // 输出 15 (大于 max，返回 max)
+
+    /*手寫inRange*/
+    function inRange(val, min, max) {
+      //如果min大於max,交換他們的位置
+      if (min > max) {
+        [min, max] = [max, min];
+      }
+      return val >= min && val <= max;
+    }
+
+    //先確保min 跟 max 的順序是正確的,如果min 大於max 就交換他們位置
+    //用邏輯運算符 && 檢查 val 是否在 min 跟 max的範圍內(包括邊界)
+
+    // console.log(inRange(10, 5, 15));   // 输出 true  (10 在 5 和 15 之间)
+    // console.log(inRange(3, 5, 15));    // 输出 false (3 小于 5)
+    // console.log(inRange(20, 5, 15));   // 输出 false (20 大于 15)
+    // console.log(inRange(10, 15, 5));   // 输出 true  (当 min 和 max 交换后，10 在 5 和 15 之间)
+
+    /*手寫compact函數*/
+    // function compact(array) {
+    //     return array.filter(Boolean);
+    // }
+
+    //使用filter方法,遍歷數組中的每個元素,並使用Boolean構造函數來將每個元素轉換為布爾值,對於數組中的假值,Boolean會將他們轉換為false,而真值則會轉換為true.
+
+    /*不依賴Boolean的方法*/
+    function compact(array) {
+      return array.filter(function (val) {
+        return (
+          val !== false &&
+          val !== null &&
+          val !== undefined &&
+          val !== 0 &&
+          val !== "" &&
+          !Number.isNaN(val)
+        );
+      });
+    }
+    //檢查數組每個元素,確保不是false, null, undefined, 0, '', NaN
+
+    // console.log(compact([0, 1, false, 2, '', 3]));  // 输出: [1, 2, 3]
+    // console.log(compact([null, undefined, 0, 'hello', NaN]));  // 输出: ['hello']
+    // console.log(compact([false, 'world', true]));
+
+    /*手寫difference函數*/
+    // function difference(arr1, arr2) {
+    //     return arr1.filter(item => !arr2.includes(item));
+    // }
+    //arr.filter(item => !arr2.includes(item))
+    // filter方法遍歷arr1 的每一個元素
+    // arr2.includes(item) 檢查arr2中是否包含當前元素
+    // 如果包含, includes返回true,否則返回false
+    // !arr2.includes(item)確保我們只保留那些不在arr2中的元素
+
+    // console.log(difference([1, 2, 3, 4], [3, 4, 5, 6]));  // 输出: [1, 2]
+    // console.log(difference([1, 2, 3], [1, 2, 3]));        // 输出: []
+    // console.log(difference([7, 8, 9], [5, 6, 7, 8]));     // 输出: [9]
+
+    /*進一步優化去重複項*/
+    function difference(arr1, arr2) {
+      return [...new Set(arr1.filter((item) => !arr2.includes(item)))];
+    }
+    //new Set(array) 會自動去重數組中的元素
+    //使用...展開運算符將Set轉回數組,從而去除重複元素
+    // console.log(difference([1, 2, 3, 3, 4], [3, 4, 5, 6]));  // 输出: [1, 2]
+    // console.log(difference([1, 2, 2, 3], [1, 2, 3]));
+
+    /*手寫dropRightWhile*/
+    // function dropRightWhile(array, predicate) {
+    //     let index = array.length;
+
+    //     //從右邊往左遍歷,直到遇到第一個不滿足條件的元素
+    //     while (index > 0 && predicate(array[index - 1])) {
+    //         index --;
+    //     }
+
+    //     //返回從開始到該索引的部分
+    //     return array.slice(0, index);
+    // }
+    //先通過 let index = array.length 獲取數組長度,然後從右側開始遍歷數組。
+    // while(index > 0 && predicate(arr[index - 1])) 檢查從右側開始的每個元素是否滿足predicate條件, 如果條件滿足,則繼續減少索引 (index -- ), 直到遇到第一個不符合條件的元素。
+    // array.slice(0, index) 返回一個從 0 到 index的子樹組,即去除右邊連續符合條件的元素。
+
+    // console.log(dropRightWhile([1, 2, 3, 4], x => x > 2));  // 输出: [1, 2]
+    // console.log(dropRightWhile([1, 2, 3, 4], x => x < 5));  // 输出: []
+    // console.log(dropRightWhile([1, 2, 3], x => x < 5));     // 输出: []
+    // console.log(dropRightWhile([5, 4, 3, 2, 1], x => x > 2)); // 输出: [5, 4, 3, 2, 1]
+
+    /*進一步優化 避免反轉*/
+    function dropRightWhile(array, predicate) {
+      let index = array.length;
+
+      //遍歷數組,直到遇到第一個不符合條件的元素
+      for (let i = array.length - 1; i >= 0; i--) {
+        if (!predicate(array[i])) {
+          index = i + 1;
+          break;
+        }
+      }
+
+      //返回從開始到該索引的部分
+      return array.slice(0, index);
+    }
+    // console.log(dropRightWhile([1, 2, 3, 4], x => x > 2));  // 输出: [1, 2]
+    // console.log(dropRightWhile([1, 2, 3, 4], x => x < 5));  // 输出: [1,2,3,4]
+    // console.log(dropRightWhile([1, 2, 3], x => x < 5));     // 输出: [1, 2, 3]
+    // console.log(dropRightWhile([5, 4, 3, 2, 1], x => x > 2)); // 输出: [5, 4, 3, 2, 1]
+
+    /*手寫fill*/
+    function myFill(array, value, start = 0, end = array.length) {
+      //如果 start 是負數, 將其轉換為從數組末尾開始的索引
+      start = start < 0 ? Math.max(array.length + start, 0) : start;
+
+      //如果end是負數, 將其轉換為從數組末端開始的索引
+      end = end < 0 ? Math.max(array.length + end, 0) : end;
+
+      //確保start 和 end 在合法範圍內
+      for (let i = start; i < end; i++) {
+        array[i] = value; //用指定的值填充
+      }
+
+      return array; //返回修改後的數據
+    }
+    //start 跟 end 是可選的, 如果他們是負數, 我們將其轉化為從數組末尾開始的位置。例如, -1 會映射到數組的最後一個元素。
+    //如果沒有提供start 和 end, 我們使用默認值: start = 0 和 end = array.length, 即填充整個數組。
+
+    //for循環:
+    // 我們從start開始,到end結束(不包含end),遍歷樹組的元素, 將每個元素賦值為 value。
+
+    // 負數做數組長度-值的原因是因為,js中負數索引代表從後面開始數的
+
+    //Math.max(a, b) 會返回a跟b之間較大的值 用這個方法讓她返回值保證不小於0
+
+    // let arr = [1, 2, 3, 4, 5];
+    // console.log(myFill(arr, 0));  // 输出: [0, 0, 0, 0]
+    // console.log(myFill(arr, 0, 1, 3));  // 输出: [1, 0, 0, 4, 5]
+    // console.log(myFill(arr, 0, -3, -1));  // 输出: [1, 2, 0, 0, 5]
+
+    /*手寫fromPairs*/
+    function fromPairs(pairs) {
+      //創建一個空對象,用來存放轉換後的鍵值對
+      const result = {};
+
+      //遍歷二維數組, 處理每一對鍵值對
+      for (let i = 0; i < pairs.length; i++) {
+        const [key, value] = pairs[i]; //解構賦值,獲取當前鍵值對
+        result[key] = value; //將鍵值對添加到結果對象中
+      }
+
+      return result; //返回結果對象
+    }
+    // 解法二:
+    // function fromPairs(pairs) {
+    //   return Object.fromEntries(pairs);
+    // }
+
+    //創建一個空對象 result 來存放最終的鍵值對
+    //遍歷pairs數組, 使用for循環遍歷每一對鍵值對, 每一對鍵值對是一個長度為2的數組,例如[key, value]
+    //解構賦值 const [key, value] = pairs[i];
+    //使用解構賦值來提取樹組中的第一個元素作為鍵, 第二個元素作為值。
+    //將鍵值對添加到對象 result 中
+    //使用 result[key] = value; 將每個鍵值對添加到對象中
+    //返回結果對象 最後回填充好的result對象
+
+    // const pairs = [['a', 1], ['b', 2], ['c', 3]];
+    // const result = fromPairs(pairs);
+    // console.log(result);  // 输出: { a: 1, b: 2, c: 3 }
+
+    // const pairs = [['name', 'Alice'], ['age', 25], ['isStudent', true]];
+    // const result = fromPairs(pairs);
+    // console.log(result);  // 输出: { name: 'Alice', age: 25, isStudent: true }
+
+    // const pairs = [];
+    // const result = fromPairs(pairs);
+    // console.log(result);  // 输出: {}
+
+    /*Medium*/
+
+    /*手寫get*/
+    function get(obj, path, defaultValue) {
+      //如果路徑是字符串, 使用 '.'分割成數組
+      if (typeof path === "string") {
+        path = path.split(".");
+      }
+
+      //遍歷路徑, 逐層訪問對象的屬性
+      let result = obj;
+      for (let i = 0; i < path.length; i++) {
+        //如果當前對象是undefined 或 null, 直接返回默認值
+        if (result == null) {
+          return defaultValue;
+        }
+
+        result = result[path[i]]; //逐層訪問屬性
+      }
+      //如果最終結果為 undefined, 返回默認值
+      return result === undefined ? defaultValue : result;
+    }
+
+    //路徑處理
+    //如果 path 是字符串, 我們使用split('.'將其轉換為數組,這樣既可以逐層訪問對象的屬性)
+    // 比如 path = 'a.b.c' 變成 ['a','b','c']
+    //如果 path 已經是數組, 則直接使用。
+    //逐層訪問對象的屬性:
+    // 使用一個for循環來遍歷路徑中的每一部分,逐層訪問對象中的屬性。如果在某一層找不到對應的屬性,
+    // result會變成undefined, 然後我們可以直接返回默認值。
+    // 返回默認值:
+    // 如果result 是 undefined 那麼 返回 defaultValue 否則 返回 result
+
+    // const obj = { a: { b: { c: 5 } } };
+    // console.log(get(obj, "a.b.c")); // 输出: 5
+    // const obj = { a: { b: { c: 5 } } };
+    // console.log(get(obj, "a.b.d")); // 输出: undefined
+    // const obj = { a: { b: { c: 5 } } };
+    // console.log(get(obj, "a.b.d", "默认值")); // 输出: '默认值'
+    // const obj = { a: { b: { c: 5 } } };
+    // console.log(get(obj, ["a", "b", "c"])); // 输出: 5
+    // const obj = { a: { b: { c: 10 } } };
+    // console.log(get(obj, "a.b.c.d", "默认值")); // 输出: '默认值'
+  
+
+    /* 手寫陣列 square */
+    function square(arr) {
+      //使用map()方法 對每個元素進行平方處理
+      return arr.map((x) => x ** 2);
+    }
+    //測試範例
+    // const originalArray = [1, 2, 3, 4, 5];
+    // const squareArray = square(originalArray);
+
+    // console.log("原始陣列:", originalArray);
+    // console.log("平方後陣列", squareArray)
+
+    /*手寫 dropWhile*/
+    function dropWhile(arr, predicate) {
+      //初始劃一個標誌變數, 用來表示是否已經找到不符合條件的元素
+      let index = 0;
+
+      //循環陣列, 查找第一個不符合條件的元素
+      while (index < arr.length && predicate(arr[index], index, arr)) {
+        index++;
+      }
+
+      //返回從第一個不符合條件的元素起的子陣列
+      return arr.slice(index);
+    }
+
+    //測試範例
+    // const arr = [1, 2, 3, 4, 5, 6];
+    // const result = dropWhile(arr, x => x < 4); //假設我們享要刪除所有小於4的元素
+    // console.log(result);//輸出[4, 5, 6]
+    //slice() ,是js內鍵的方法,選擇並返回一個新陣列的片段,不會修改原始陣列,而是返回一個子陣列
+    // arr.slice([begin[ , end]]);
+    // begin:可選,開始索引(包含),默認為0. end: 可選,結束所以(不包含),默認陣列長度
+    //工作原理: slice() 返回的是從begin索引到 end索引之間的所有元素, 但不包括end索引的元素。
+    // 如果不提供 end , slice()會返回從 begin到陣列的末尾的所有元素
+
+    /*手寫 findindex */
+    function findIndex(arr, predicate) {
+      //遍歷陣列中的每一個元素
+      for (let index = 0; index < arr.length; index++) {
+        //檢查元素是否符合條件
+        if (predicate(arr[index], index, arr)) {
+          return index; //找到符合條件的元素, 返回其索引值
+        }
+      }
+      return -1; //如果沒有符合條件的元素, 返回 -1
+    }
+
+    // const arr = [5, 12, 8, 130, 44];
+    // 我們希望找到第一個大於 10 的數字的索引
+    // const result = findIndex(arr, (x) => x > 10);
+    // console.log(result); // 輸出: 1 (因為 12 是第一個大於 10 的元素，並且其索引是 1)
+
+    /* 陣列去重 removeDuplicates */
+    // 方法1:
+    function removeDuplicates(arr) {
+      return [...new Set(arr)];
+    }
+    //將陣列arr 轉換為一個Set, Set會自動移除陣列中的重複元素
+    //[...]:用擴展運算符, ...將Set轉換回陣列, 從而返回一個去重後的陣列。
+    //方法2:
+    // function removeDuplicates(arr) {
+    //   const result = [];
+    //   for (let i = 0; i < arr.length; i++) {
+    //     if (result.indexOf(arr[i]) === -1) {
+    //       result.push(arr[i]);
+    //     }
+    //   }
+    //   return result;
+    // }
+    //result 用來存儲不重複的元素
+    //indexOf(arr[i]):檢查當前元素arr[i]是否已經在result 中出現過。 如果返回 -1, 表示該元素是第一次出現,我們將其推入result。
+    //當元素第一次出現時,他會被加入到result陣列中。
+
+    // const arr = [1, 2, 2, 3, 4, 4, 5];
+    // console.log(removeDuplicates(arr)); // 輸出: [1, 2, 3, 4, 5]
+    //方法3:
+    // function removeDuplicates(arr) {
+    //     return arr.filter((value, index, self) => self.indexOf(value) === index);
+    // }
+    //arr.filter()這個方法, 會返回一個新的陣列, 該陣列包含所有通過測試的元素。
+    //self.indexOf(value): self是原始陣列, indexOf(value) 返回當前陣列元素 value 在陣列中的第一次出現的索引
+    //self.indexOf(value) === index : 如果元素的第一次出現的索引等於當前索引, 則保留該元素, 否則跳過它。 這樣既能去除陣列中的重複元素。
+
+    // const arr = [1, 2, 2, 3, 4, 4, 5];
+    // console.log(removeDuplicates(arr));  // 輸出: [1, 2, 3, 4, 5]
+    //方法4:O(n)時間複雜度的去重
+    // function removeDuplicates(arr) {
+    //     //先建立一個叫seen的集合, 來存下已經有的元素
+    //     const seen = new Set();
+    //     //建立一個叫 output的陣列, 用來輸出最終結果
+    //     const output = [];
+
+    //     //用迴圈, 走過原本的陣列  for of 直接返回陣列中的元素而不是索引
+    //     for(let item of arr) {
+    //         //判斷當前的元素,是否一經在seen, 如果不在, 表示還沒重複
+    //         if(!seen.has(item)) {
+    //             output.push(item);//所以這時可以放入要被輸出的 output 陣列
+    //             seen.add(item); //這時紀錄一下這個項目已經被放入, 下次就不會再被放入
+    //         }
+    //     }
+    //     return output; //最終輸出結果
+    // }
+    // const arr = [1, 2, 2, 3, 4, 4, 5];
+    // console.log(removeDuplicates(arr));  // 輸出: [1, 2, 3, 4, 5]
+
+    /* 實作Array.prototype.at */
+    function at(arr, index) {
+      //如果索引是負數, 將其轉換為對應的正數索引
+      if (index < 0) {
+        index = arr.length + index;
+      }
+
+      //如果索引小於0 或 大於等於陣列長度, 返回undefined
+      if (index < 0 || index >= arr.length) {
+        return undefined;
+      }
+
+      //返回對應索引的元素
+      return arr[index];
+    }
+
+    // 負數索引處理: 如果索引是負數, 我們將其轉換為對應的正數索引, 這樣我們可以通過arr.length + index 來訪問從陣列末尾前往的元素。 例如, -1 就會變成 arr.length -1, 即陣列的最後一個元素。
+    // 檢查範圍: 如果計算出的索引小於 0 或大於等於陣列的長度, 我們返回undefined, 這樣能夠避免因索引超出範圍而出錯
+    //返回對應的元素, 如果索引合法,就髮回該索引對應的元素
+    // const arr = [10, 20, 30, 40, 50];
+    // console.log(at(arr, 2)); // 輸出: 30 (第三個元素)
+    // console.log(at(arr, -1)); // 輸出: 50 (最後一個元素)
+    // console.log(at(arr, 5));  // 輸出: undefined (索引超出範圍)
+  
+    /* 手寫 cloneDeep 深拷貝*/
+    function cloneDeep(obj) {
+        //檢查是否為基本類型或者null
+        if(obj === null || typeof obj !== 'object') {
+            return obj;
+        }
+
+        //處理日期類型
+        if(obj instanceof Date) {
+            return new Date(obj);
+        }
+
+        //處理正則表達式
+        if(obj instanceof RegExp) {
+            return new RegExp(obj);
+        }
+
+        //創建新對象或樹組
+        const result = Array.isArray(obj) ? [] : {};
+
+        //遍歷對象的鍵值對並遞歸拷貝
+        for(const key in obj) {
+            if(obj.hasOwnProperty(key)) {
+                result[key] = cloneDeep(obj[key]);
+            }
+        }
+
+        return result;
+    }
+    // 1.基本類型和null, 如果傳入的是基本類型(如 數字、字符串、布爾值等) 或 null, 直接返回該值,因為這些類型是不可變的, 沒有必要深拷貝
+    // 2. 日期類型(Date), 如果對象是Date類型, 通過 new Date(obj) 創建一個新的 Date實例。
+    // 3.正則表達式(RegExp 如果對象是 RegExp類型) 通過new RegExp(obj) 創建一個新的RegExp實例
+    // 4. 對象或數組, 對於普通對象或是樹組, 我們會遍歷每個屬性, 並對每個屬性值遞歸調用cloneDeep 來實現深拷貝
+
+    
+  </script>
+</html>
